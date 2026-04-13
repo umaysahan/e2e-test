@@ -1,0 +1,60 @@
+{
+  "compilerOptions": {
+    // Target Node 20+ — supports modern ES features natively
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    // Strict mode catches bugs at compile time, not runtime
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Path aliases — cleaner imports (e.g., @pages/login.page)
+    "baseUrl": ".",
+    "paths": {
+      "@pages/*": ["pages/*"],
+      "@api/*": ["api/*"],
+      "@fixtures/*": ["fixtures/*"],
+      "@utils/*": ["utils/*"],
+      "@config/*": ["config/*"],
+      "@data/*": ["data/*"]
+    },
+
+    // Interop with CommonJS modules (some deps still use CJS)
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+
+    // We don't emit — Playwright/tsx handle transpilation
+    "noEmit": true,
+
+    // Source maps for better error traces in test reports
+    "sourceMap": true,
+
+    // Needed for decorators if using allure step annotations
+    "experimentalDecorators": true
+  },
+  "include": [
+    "tests/**/*.ts",
+    "pages/**/*.ts",
+    "api/**/*.ts",
+    "fixtures/**/*.ts",
+    "utils/**/*.ts",
+    "config/**/*.ts",
+    "data/**/*.ts",
+    "scripts/**/*.ts",
+    "features/**/*.ts",
+    "playwright.config.ts",
+    "cucumber.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "allure-results",
+    "allure-report",
+    "test-results",
+    "k6" // k6 uses its own JS runtime, not Node/TS
+  ]
+}

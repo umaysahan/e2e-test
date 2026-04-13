@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx playwright:*)",
+      "Bash(mkdir -p /c/Users/usahan/job-hunter/features/step-definitions)",
+      "Bash(mkdir -p /c/Users/usahan/job-hunter/features/support)",
+      "Bash(npx cucumber-js:*)",
+      "Bash(node --import tsx/esm ./node_modules/.bin/cucumber-js)",
+      "Bash(npx tsx:*)",
+      "Bash(npm run:*)",
+      "Bash(node -e \"const yaml = require\\('yaml'\\); const fs = require\\('fs'\\); const content = fs.readFileSync\\('.github/workflows/e2e.yml', 'utf8'\\); yaml.parse\\(content\\); console.log\\('YAML is valid'\\);\")",
+      "Bash(python3 -c \"import yaml; yaml.safe_load\\(open\\('.github/workflows/e2e.yml'\\)\\); print\\('YAML is valid'\\)\")"
+    ]
+  }
+}

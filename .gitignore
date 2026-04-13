@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Test output — regenerated on every run
+test-results/
+allure-results/
+allure-report/
+playwright-report/
+blob-report/
+
+# Visual regression baselines are tracked; diffs are not
+snapshots/*-diff.png
+snapshots/*-actual.png
+
+# Environment files with real credentials
+.env
+.env.local
+.env.*.local
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+!.vscode/extensions.json
+.idea/
+
+# TypeScript build output (we don't emit)
+dist/
+*.tsbuildinfo
+
+# Docker
+.docker/
+
+# Coverage (if added later)
+coverage/
+
+# k6 output
+k6-results/

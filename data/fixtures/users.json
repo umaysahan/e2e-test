@@ -1,0 +1,37 @@
+{
+  "standardUser": {
+    "username": "standard_user",
+    "password": "secret_sauce",
+    "description": "Default user — full access, no quirks"
+  },
+  "lockedUser": {
+    "username": "locked_out_user",
+    "password": "secret_sauce",
+    "description": "Account is locked — login should fail"
+  },
+  "problemUser": {
+    "username": "problem_user",
+    "password": "secret_sauce",
+    "description": "Intentionally broken — images are wrong, some flows fail"
+  },
+  "performanceUser": {
+    "username": "performance_glitch_user",
+    "password": "secret_sauce",
+    "description": "Simulates slow server responses"
+  },
+  "errorUser": {
+    "username": "error_user",
+    "password": "secret_sauce",
+    "description": "Triggers server errors on some actions"
+  },
+  "visualUser": {
+    "username": "visual_user",
+    "password": "secret_sauce",
+    "description": "Has visual/UI differences for visual regression testing"
+  },
+  "invalidUser": {
+    "username": "nonexistent_user",
+    "password": "wrong_password",
+    "description": "Invalid credentials for negative testing"
+  }
+}

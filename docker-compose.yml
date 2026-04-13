@@ -1,0 +1,37 @@
+# =============================================================================
+# Docker Compose — run tests + Allure report server locally
+# =============================================================================
+# Usage:
+#   docker compose up tests        → run all tests
+#   docker compose up allure       → serve Allure report at http://localhost:5252
+#   docker compose up              → run tests, then view report
+# =============================================================================
+
+services:
+  tests:
+    build: .
+    container_name: e2e-tests
+    environment:
+      - TEST_ENV=dev
+      - CI=true
+    volumes:
+      # Mount results out so Allure can read them
+      - ./allure-results:/app/allure-results
+      - ./test-results:/app/test-results
+    command: npx playwright test --project=chromium
+
+  allure:
+    image: frankescobar/allure-docker-service:latest
+    container_name: allure-report
+    ports:
+      - '5252:5252' # Allure UI
+      - '5050:5050' # Allure API
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 5
+      KEEP_HISTORY: 'TRUE'
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-report:/app/default-reports
+    depends_on:
+      tests:
+        condition: service_completed_successfully

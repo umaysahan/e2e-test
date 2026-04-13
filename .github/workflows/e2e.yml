@@ -1,0 +1,202 @@
+# =============================================================================
+# E2E Test Pipeline
+# =============================================================================
+# Triggers: every PR, push to main, nightly full regression
+# Strategy: lint/typecheck → matrix tests (3 browsers × 2 Node) → BDD → Allure
+# =============================================================================
+
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Nightly full regression at 2:00 AM UTC
+  schedule:
+    - cron: '0 2 * * *'
+  # Manual trigger for debugging
+  workflow_dispatch:
+
+# Cancel in-progress runs when a new commit is pushed to the same PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Shared env vars for all jobs
+  CI: true
+  TEST_ENV: dev
+  BASE_URL: https://www.saucedemo.com
+  API_BASE_URL: https://petstore.swagger.io/v2
+
+jobs:
+  # ===========================================================================
+  # Job 1: Code Quality — fast gate, fails early before expensive browser tests
+  # ===========================================================================
+  quality:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm run format:check
+
+  # ===========================================================================
+  # Job 2: E2E Tests — matrix across browsers and Node versions
+  # ===========================================================================
+  test:
+    name: Test (${{ matrix.browser }}, Node ${{ matrix.node }})
+    needs: quality
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Run all matrix combos even if one fails
+      matrix:
+        browser: [chromium, firefox, webkit]
+        node: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run E2E tests — ${{ matrix.browser }}
+        run: npx playwright test --project=${{ matrix.browser }}
+
+      - name: Run API tests
+        if: matrix.browser == 'chromium' && matrix.node == 20
+        run: npx playwright test --project=api
+
+      # --- Artifact uploads (only on failure or nightly) ---
+      - name: Upload test results
+        if: failure() || github.event_name == 'schedule'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.browser }}-node${{ matrix.node }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.browser }}-node${{ matrix.node }}
+          path: allure-results/
+          retention-days: 14
+
+  # ===========================================================================
+  # Job 3: BDD Tests — Cucumber scenarios (runs in parallel with browser matrix)
+  # ===========================================================================
+  bdd:
+    name: BDD Scenarios
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run BDD tests
+        run: npm run test:bdd
+
+      - name: Upload BDD report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdd-report
+          path: test-results/cucumber-report.html
+          retention-days: 14
+
+  # ===========================================================================
+  # Job 4: Allure Report — merge all results and deploy to GitHub Pages
+  # ===========================================================================
+  report:
+    name: Allure Report
+    needs: [test, bdd]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Download all allure-results artifacts from the matrix
+      - name: Download all Allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results-all
+          merge-multiple: true
+
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
+
+      - name: Generate Allure report
+        run: allure generate allure-results-all --clean -o allure-report
+
+      # Restore previous report history for trend charts
+      - name: Download previous report
+        uses: actions/cache@v4
+        with:
+          path: allure-report/history
+          key: allure-history-${{ github.ref_name }}
+          restore-keys: allure-history-
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+
+  # ===========================================================================
+  # Job 5: Nightly Regression Summary — post results to PR or issue
+  # ===========================================================================
+  nightly-summary:
+    name: Nightly Summary
+    needs: [test, bdd]
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create summary
+        run: |
+          echo "## 🌙 Nightly Regression Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Date:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Browsers:** chromium, firefox, webkit" >> $GITHUB_STEP_SUMMARY
+          echo "- **Node versions:** 20, 22" >> $GITHUB_STEP_SUMMARY
+          echo "- **BDD scenarios:** included" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "View the full [Allure Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/) for details." >> $GITHUB_STEP_SUMMARY
