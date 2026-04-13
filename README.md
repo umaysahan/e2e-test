@@ -5,11 +5,11 @@
 <h1 align="center">Hybrid E2E Test Automation Framework</h1>
 
 <p align="center">
-  Production-grade test automation ecosystem covering UI, API, BDD, visual regression, and AI-powered test generation — built with Playwright + TypeScript.
+  Production-grade test automation ecosystem covering UI, API, BDD, and visual regression — built with Playwright + TypeScript.
 </p>
 
 <p align="center">
-  <a href="https://github.com/usahan/job-hunter/actions/workflows/e2e.yml"><img src="https://github.com/usahan/job-hunter/actions/workflows/e2e.yml/badge.svg" alt="E2E Tests" /></a>
+  <a href="https://github.com/usahan/e2e-test/actions/workflows/e2e.yml"><img src="https://github.com/usahan/e2e-test/actions/workflows/e2e.yml/badge.svg" alt="E2E Tests" /></a>
   <img src="https://img.shields.io/badge/tests-37%2B%20cases-brightgreen" alt="Test Cases" />
   <img src="https://img.shields.io/badge/BDD-7%20scenarios-blue" alt="BDD Scenarios" />
   <img src="https://img.shields.io/badge/browsers-3%20%2B%20mobile-orange" alt="Cross Browser" />
@@ -23,7 +23,6 @@
   <a href="#architecture">Architecture</a> |
   <a href="#test-coverage">Test Coverage</a> |
   <a href="#cicd-pipeline">CI/CD</a> |
-  <a href="#ai-test-generation">AI Test Gen</a> |
   <a href="https://usahan.github.io/job-hunter/">Live Allure Report</a>
 </p>
 
@@ -36,7 +35,6 @@ Most QA portfolios show toy demos with 5 tests and no CI. This repo is different
 - **UI + API** testing in one unified framework (no context switching)
 - **BDD layer** for non-technical stakeholders to read and validate
 - **Visual regression** to catch CSS/layout regressions automatically
-- **AI-powered test generation** that turns user stories into Gherkin in seconds
 - **CI/CD pipeline** with matrix testing across 3 browsers, Allure reporting, and nightly runs
 - **Docker support** for reproducible execution anywhere
 
@@ -58,7 +56,6 @@ Most QA portfolios show toy demos with 5 tests and no CI. This repo is different
 | **CI/CD**             | GitHub Actions               | Matrix strategy, auto-deploy reports       |
 | **Containerization**  | Docker + Compose             | Reproducible environments                  |
 | **Code Quality**      | ESLint + Prettier + Husky    | Enforced standards on every commit         |
-| **AI Bonus**          | Claude API                   | Generate BDD scenarios from user stories   |
 
 ---
 
@@ -86,7 +83,6 @@ graph TB
         REPORT["Allure Reporting<br/>GitHub Pages"]
         CICD["GitHub Actions<br/>3 browsers x 2 Node"]
         DOCKER["Docker<br/>Containerized runs"]
-        AI["AI Generator<br/>Claude API"]
     end
 
     UI --> POM
@@ -106,7 +102,6 @@ graph TB
     BDD --> REPORT
     REPORT --> CICD
     CICD --> DOCKER
-    AI -->|generates| BDD
 ```
 
 ---
@@ -122,7 +117,7 @@ graph TB
 
 ```bash
 # Clone and install
-git clone https://github.com/usahan/job-hunter.git
+git clone https://github.com/usahan/e2e-test.git
 cd job-hunter
 npm install
 
@@ -273,30 +268,6 @@ Push / PR to main
 
 ---
 
-## AI Test Generation
-
-Generate BDD scenarios from plain-English user stories using the Claude API:
-
-```bash
-npm run generate:tests -- --story "As a user, I want to sort products by price"
-```
-
-The script:
-
-1. Sends the user story to Claude with full app context (pages, users, existing steps)
-2. Returns 4-6 Gherkin scenarios covering happy paths, edge cases, and data-driven variations
-3. Reuses existing step definitions — marks new steps with `# NEW STEP` comments
-4. Saves the `.feature` file to `features/generated-*.feature`
-
-```bash
-# From a file containing multiple stories
-npm run generate:tests -- --file user-stories.txt
-```
-
-> Set `ANTHROPIC_API_KEY` in your `.env` file to enable this feature.
-
----
-
 ## Environment Configuration
 
 The framework supports multiple environments via `.env` files:
@@ -309,14 +280,13 @@ TEST_ENV=staging npm test
 TEST_ENV=prod npm run test:smoke
 ```
 
-| Variable            | Default                          | Purpose                |
-| ------------------- | -------------------------------- | ---------------------- |
-| `TEST_ENV`          | `dev`                            | Environment selector   |
-| `BASE_URL`          | `https://www.saucedemo.com`      | UI target              |
-| `API_BASE_URL`      | `https://petstore.swagger.io/v2` | API target             |
-| `UI_USERNAME`       | `standard_user`                  | Login credentials      |
-| `UI_PASSWORD`       | `secret_sauce`                   | Login credentials      |
-| `ANTHROPIC_API_KEY` | —                                | For AI test generation |
+| Variable       | Default                          | Purpose              |
+| -------------- | -------------------------------- | -------------------- |
+| `TEST_ENV`     | `dev`                            | Environment selector |
+| `BASE_URL`     | `https://www.saucedemo.com`      | UI target            |
+| `API_BASE_URL` | `https://petstore.swagger.io/v2` | API target           |
+| `UI_USERNAME`  | `standard_user`                  | Login credentials    |
+| `UI_PASSWORD`  | `secret_sauce`                   | Login credentials    |
 
 ---
 
@@ -355,7 +325,6 @@ TEST_ENV=prod npm run test:smoke
 1. **Write the feature** in `features/my-feature.feature`
 2. **Add step definitions** in `features/step-definitions/my-feature.steps.ts`
 3. **Register** the step file in `cucumber.cjs` require array
-4. **Or generate it**: `npm run generate:tests -- --story "your user story"`
 
 ### Adding an API Test
 
@@ -398,8 +367,7 @@ hybrid-e2e-framework/
 │   ├── checkout-complete.page.ts
 │   └── components/           # Reusable UI components
 ├── scripts/
-│   ├── setup-global.ts       # Health check before test run
-│   └── generate-tests.ts     # AI-powered Gherkin generator
+│   └── setup-global.ts       # Health check before test run
 ├── tests/
 │   ├── ui/                   # UI specs (login, cart, checkout, visual)
 │   └── api/                  # API specs (pet, store, user)
@@ -458,5 +426,5 @@ MIT - see [LICENSE](LICENSE) for details.
 
 <p align="center">
   Built with Playwright, TypeScript, and attention to detail.<br/>
-  <a href="https://github.com/usahan/job-hunter">Star this repo</a> if it helped you.
+  <a href="https://github.com/usahan/e2e-test">Star this repo</a> if it helped you.
 </p>

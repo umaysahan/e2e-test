@@ -56,12 +56,5 @@ module.exports = {
         'playwright/no-standalone-expect': 'off',
       },
     },
-    {
-      // CLI scripts need console output
-      files: ['scripts/**/*.ts'],
-      rules: {
-        'no-console': 'off',
-      },
-    },
   ],
 };

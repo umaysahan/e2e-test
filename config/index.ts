@@ -25,9 +25,6 @@ export const config = {
   apiBaseUrl: process.env.API_BASE_URL || 'https://petstore.swagger.io/v2',
   apiKey: process.env.API_KEY || 'special-key',
 
-  // AI test generation
-  anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
-
   // Timeouts (ms)
   timeouts: {
     action: 10_000,
