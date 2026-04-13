@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/usahan/e2e-test/actions/workflows/e2e.yml"><img src="https://github.com/usahan/e2e-test/actions/workflows/e2e.yml/badge.svg" alt="E2E Tests" /></a>
+  <a href="https://github.com/umaysahan/e2e-test/actions/workflows/e2e.yml"><img src="https://github.com/umaysahan/e2e-test/actions/workflows/e2e.yml/badge.svg" alt="E2E Tests" /></a>
   <img src="https://img.shields.io/badge/tests-37%2B%20cases-brightgreen" alt="Test Cases" />
   <img src="https://img.shields.io/badge/BDD-7%20scenarios-blue" alt="BDD Scenarios" />
   <img src="https://img.shields.io/badge/browsers-3%20%2B%20mobile-orange" alt="Cross Browser" />
@@ -23,7 +23,7 @@
   <a href="#architecture">Architecture</a> |
   <a href="#test-coverage">Test Coverage</a> |
   <a href="#cicd-pipeline">CI/CD</a> |
-  <a href="https://usahan.github.io/job-hunter/">Live Allure Report</a>
+  <a href="https://umaysahan.github.io/job-hunter/">Live Allure Report</a>
 </p>
 
 ---
@@ -117,8 +117,8 @@ graph TB
 
 ```bash
 # Clone and install
-git clone https://github.com/usahan/e2e-test.git
-cd job-hunter
+git clone https://github.com/umaysahan/e2e-test.git
+cd e2e-test
 npm install
 
 # Install browsers
@@ -152,6 +152,16 @@ npm run test:headed
 # Debug mode (step through with Playwright Inspector)
 npm run test:debug
 ```
+
+### Record Demo Video
+
+```bash
+# Records a full E2E showcase video (login, sorting, cart, checkout)
+npm run test:demo
+# Output: demo-recording/demo.webm
+```
+
+https://github.com/user-attachments/assets/demo-placeholder
 
 ### Docker
 
@@ -386,7 +396,7 @@ hybrid-e2e-framework/
 
 Every pipeline run generates an interactive Allure report deployed to GitHub Pages:
 
-**[View Live Report](https://usahan.github.io/job-hunter/)**
+**[View Live Report](https://umaysahan.github.io/job-hunter/)**
 
 Features: test history trends, failure screenshots, step-by-step execution, environment metadata.
 
@@ -426,5 +436,5 @@ MIT - see [LICENSE](LICENSE) for details.
 
 <p align="center">
   Built with Playwright, TypeScript, and attention to detail.<br/>
-  <a href="https://github.com/usahan/e2e-test">Star this repo</a> if it helped you.
+  <a href="https://github.com/umaysahan/e2e-test">Star this repo</a> if it helped you.
 </p>

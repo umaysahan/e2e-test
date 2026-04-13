@@ -18,6 +18,7 @@
     "test:regression": "playwright test --grep @regression",
     "test:critical": "playwright test --grep @critical",
     "test:headed": "playwright test --headed --project=chromium",
+    "test:demo": "tsx scripts/record-demo.ts",
     "test:debug": "PWDEBUG=1 playwright test --project=chromium",
     "test:shard": "playwright test --shard=$SHARD",
     "test:bdd": "cucumber-js --config cucumber.cjs",

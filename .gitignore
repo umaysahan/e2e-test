@@ -36,3 +36,6 @@ coverage/
 
 # k6 output
 k6-results/
+
+# Demo recording output
+demo-recording/
