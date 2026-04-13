@@ -161,7 +161,7 @@ npm run test:demo
 # Output: demo-recording/demo.webm
 ```
 
-https://github.com/user-attachments/assets/demo-placeholder
+https://github.com/user-attachments/assets/dcb282e3-c8ce-49c4-b8c8-91adcc1ea8d4
 
 ### Docker
 
